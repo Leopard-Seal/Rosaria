@@ -1,12 +1,45 @@
-package rosaria;
+package rosaria.main;
 
-// Shift を 2 回押して 'どこでも検索' ダイアログを開き、`show whitespaces` と入力して
-// Enter キーを押します。これでコードに空白文字が表示されます。
+import rosaria.io.FileUtil;
+
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Main {
+    public static final AtomicInteger successCnt = new AtomicInteger();
     public static void main(String[] args) {
-        // ハイライトされたテキストにキャレットがある状態で Ctrl+1 を押して
-        // IntelliJ IDEA が提案する修正方法を表示します。
-        System.out.printf("Hello and welcome!");
+        Scanner scanner = new Scanner(System.in);
 
+        int start = 0;
+        int end   = 35050;
+
+        System.out.println("Max Threads : ");
+        int nThreads = scanner.nextInt();
+        ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+
+        for (int i = start; i <= end; i++) {
+            String url = "https://business-mail.jp/example/" + i;
+            String clazz = "mailtxt"; // Assuming this is the class you want to scrape
+            Rosaria rosaria = new Rosaria(url, clazz, i);
+            executor.execute(rosaria);
+        }
+
+        executor.shutdown();
+
+        try {
+            while (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                System.out.println("Waiting for tasks to finish...");
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Tasks interrupted");
+        }
+
+        // ここで FileUtil のエグゼキュータをシャットダウン
+        FileUtil.shutdownFileWriteExecutor();
+
+        System.out.println("All tasks completed. Get Files : " + successCnt.get());
     }
 }
