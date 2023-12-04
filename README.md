@@ -37,4 +37,4 @@ Rosariaは、ウェブページのコンテンツをクロールし、特定のH
 ## ライセンス
 
 このプロジェクトは [Creative Commons Attribution-NoDerivatives 4.0 International License](https://creativecommons.org/licenses/by-nd/4.0/) の下で公開されています。
-詳細は [LICENSE](LICENSE.md) ファイルを参照してください。
+詳細は [LICENSE](LICENSE.txt) ファイルを参照してください。
